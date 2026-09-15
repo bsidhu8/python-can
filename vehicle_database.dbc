@@ -1,0 +1,11 @@
+VERSION ""
+NS_ :
+
+BS_:
+
+BU_: ECU_Engine DISPLAY
+
+BO_ 1544 EngineStatus: 8 ECU_Engine
+
+SG_ EngineRPM : 0|16@1+ (1,0) [0|8000] "RPM" DISPLAY
+SG_ CoolantTemperature : 16|8@1+ (1,-40) [-40|215] "C" DISPLAY
