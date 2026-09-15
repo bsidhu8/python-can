@@ -29,11 +29,15 @@ import cantools
 from time import sleep
 
 # DBC file to use
+sample_file = 0
 try:
     if ".dbc" in sys.argv[1]:
         dbc_file = sys.argv[1]
+        if "sample" in sys.argv[1]:
+            sample_file = 1
 except:
     dbc_file = "vehicle_database.dbc"
+    sample_file = 0
 
 # Load DBC file
 db = cantools.database.load_file(dbc_file)
@@ -58,10 +62,15 @@ try:
         current_oiltemp += 5
 
         # Encode physical vaules > raw data w.r.t. DBC file
-        raw_data = db.encode_message("EngineStatus",
+        if sample_file==1:
+            raw_data = db.encode_message("EngineStatus",
+                        {'EngineRPM': current_rpm,
+                        'CoolantTemperature': current_temp,
+                        'OilTemperature': current_oiltemp})
+        else:
+            raw_data = db.encode_message("EngineStatus",
                     {'EngineRPM': current_rpm,
-                     'CoolantTemperature': current_temp,
-                     'OilTemperature': current_oiltemp})
+                     'CoolantTemperature': current_temp})
 
         # Build CAN message
         # Extract CAN message arbitration parameters from DBC file
