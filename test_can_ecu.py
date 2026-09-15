@@ -37,7 +37,6 @@ try:
             sample_file = 1
 except:
     dbc_file = "vehicle_database.dbc"
-    sample_file = 0
 
 # Load DBC file
 db = cantools.database.load_file(dbc_file)
