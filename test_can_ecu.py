@@ -23,12 +23,20 @@ DBC (Database CAN) lists -
 DBC files used in HITL and SITL for ECU testing and validation
 
 """
+import sys
 import can
 import cantools
 from time import sleep
 
+# DBC file to use
+try:
+    if ".dbc" in sys.argv[1]:
+        dbc_file = sys.argv[1]
+except:
+    dbc_file = "vehicle_database.dbc"
+
 # Load DBC file
-db = cantools.database.load_file("vehicle_database.dbc")
+db = cantools.database.load_file(dbc_file)
 
 # Create 2 Virtual Nodes
 ecu_bus = can.interface.Bus("vehicle_network", interface="virtual")
@@ -39,6 +47,7 @@ print("ECU Simulator active...")
 # Simulated vehicle states
 current_rpm = 800
 current_temp = 20
+current_oiltemp = 30
 
 try:
     for _ in range(5): # Simulate 5 consequetive broadcast steps
@@ -46,11 +55,13 @@ try:
         # Update simulated data metrics dynamically
         current_rpm += 150
         current_temp += 1
+        current_oiltemp += 5
 
         # Encode physical vaules > raw data w.r.t. DBC file
         raw_data = db.encode_message("EngineStatus",
                     {'EngineRPM': current_rpm,
-                     'CoolantTemperature': current_temp})
+                     'CoolantTemperature': current_temp,
+                     'OilTemperature': current_oiltemp})
 
         # Build CAN message
         # Extract CAN message arbitration parameters from DBC file
